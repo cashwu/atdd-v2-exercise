@@ -2,6 +2,8 @@ package com.odde.atddv2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.odde.atddv2.entity.User;
+import com.odde.atddv2.page.Browser;
+import com.odde.atddv2.page.HomePage;
 import com.odde.atddv2.repo.UserRepo;
 import io.cucumber.java.After;
 import io.cucumber.java.zh_cn.假如;
@@ -16,7 +18,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +25,12 @@ import static org.awaitility.Awaitility.await;
 import static org.openqa.selenium.By.xpath;
 
 public class TestSteps {
+
+    @Autowired
+    private HomePage homePage;
+    @Autowired
+    private Browser browser;
+
     @Autowired
     UserRepo userRepo;
     private WebDriver webDriver = null;
@@ -46,6 +53,8 @@ public class TestSteps {
             webDriver.quit();
             webDriver = null;
         }
+
+        browser.quitWebDriver();
     }
 
     @那么("打印Token")
@@ -87,23 +96,18 @@ public class TestSteps {
 
     @当("以用户名为{string}和密码为{string}登录时")
     public void 以用户名为和密码为登录时(String userName, String password) {
-        getWebDriver().get("http://host.docker.internal:10081");
-
-        await().ignoreExceptions().until(() -> getWebDriver().findElement(xpath("//*[@placeholder='用户名']")), Objects::nonNull).sendKeys(userName);
-
-        await().ignoreExceptions().until(() -> getWebDriver().findElement(xpath("//*[@placeholder='密码']")), Objects::nonNull).sendKeys(password);
-
-        await().ignoreExceptions().until(() -> getWebDriver().findElement(xpath("//*[text()='登录']")), Objects::nonNull).click();
+        browser.lunch();
+        homePage.login(userName, password);
     }
 
     @那么("{string}登录成功")
     public void 登录成功(String userName) {
-        await().ignoreExceptions().untilAsserted(() -> assertThat(getWebDriver().findElements(xpath("//*[text()='" + ("Welcome " + userName) + "']"))).isNotEmpty());
+        browser.shouldHaveText("Welcome " + userName);
     }
 
     @那么("登录失败的错误信息是{string}")
     public void 登录失败的错误信息是(String message) {
-        await().ignoreExceptions().untilAsserted(() -> assertThat(getWebDriver().findElements(xpath("//*[text()='" + message + "']"))).isNotEmpty());
+        browser.shouldHaveText(message);
     }
 
     public WebDriver getWebDriver() {
