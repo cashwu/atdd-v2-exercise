@@ -9,8 +9,10 @@ import io.cucumber.java.zh_cn.当;
 import io.cucumber.java.zh_cn.那么;
 import lombok.SneakyThrows;
 import okhttp3.*;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.openqa.selenium.By.xpath;
 
 public class TestSteps {
@@ -87,5 +90,36 @@ public class TestSteps {
         if (webDriver == null)
             webDriver = createWebDriver();
         return webDriver;
+    }
+
+    @当("以用户名为{string}和密码为{string}登录时")
+    public void 以用户名为和密码为登录时(String userName, String password) throws InterruptedException {
+        getWebDriver().get("http://host.docker.internal:10081");
+
+        getWebDriver().findElement(By.xpath("//*[@id=\"app\"]/div/form/div[2]/div/div/input")).sendKeys(userName);
+        getWebDriver().findElement(By.xpath("//*[@id=\"app\"]/div/form/div[3]/div/div/input")).sendKeys(password);
+        getWebDriver().findElement(By.xpath("//*[@id=\"app\"]/div/form/button")).click();
+    }
+
+    @那么("{string}登录成功")
+    public void 登录成功(String userName) throws InterruptedException {
+
+        await().ignoreExceptions().untilAsserted(() -> {
+            WebElement element = getWebDriver().findElement(xpath("//*[text()='Welcome " + userName + "']"));
+            Assertions.assertNotNull(element);
+        });
+
+        TimeUnit.SECONDS.sleep(10);
+    }
+
+    @那么("登录失败的错误信息是{string}")
+    public void 登录失败的错误信息是(String errorMessage) throws InterruptedException {
+
+        await().ignoreExceptions().untilAsserted(() -> {
+            WebElement element = getWebDriver().findElement(xpath("//*[text()='" + errorMessage + "']"));
+            Assertions.assertNotNull(element);
+        });
+
+        TimeUnit.SECONDS.sleep(10);
     }
 }
