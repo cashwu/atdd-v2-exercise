@@ -4,7 +4,6 @@ import com.odde.atddv2.entity.User;
 import com.odde.atddv2.page.HomePage;
 import com.odde.atddv2.repo.UserRepo;
 import io.cucumber.java.Before;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.zh_cn.假如;
 import io.cucumber.java.zh_cn.当;
 import io.cucumber.java.zh_cn.那么;
@@ -43,6 +42,10 @@ public class LoginSteps {
 
     @Before("@ui-login")
     public void uiLogin() {
-        throw new PendingException();
+
+        String userName = "joseph";
+        String password = "123";
+        存在用户名为和密码为的用户(userName, password);
+        以用户名为和密码为登录时(userName, password);
     }
 }
