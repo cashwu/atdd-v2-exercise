@@ -33,6 +33,7 @@ public class OrderSteps {
         JavaTimeModule module = new JavaTimeModule();
         objectMapper.registerModule(module);
         table.asMaps().forEach(map -> orderRepo.save(objectMapper.convertValue(map, Order.class)));
+
     }
 
     @当("查询订单时")
