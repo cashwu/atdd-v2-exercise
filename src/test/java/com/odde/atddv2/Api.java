@@ -14,6 +14,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.github.leeonky.dal.Assertions.expect;
+
 public class Api {
 
     private final OkHttpClient okHttpClient = new OkHttpClient();
@@ -64,4 +66,7 @@ public class Api {
         JSONAssert.assertEquals(json, response, JSONCompareMode.NON_EXTENSIBLE);
     }
 
+    public void responseShouldMatch(String expected) {
+        expect(response).should(expected);
+    }
 }

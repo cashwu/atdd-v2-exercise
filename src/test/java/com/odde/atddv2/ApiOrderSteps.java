@@ -52,6 +52,11 @@ public class ApiOrderSteps {
         api.get(String.format("orders/%s", code));
     }
 
+    @那么("返回如下:")
+    public void 返回如下(String expected) {
+        api.responseShouldMatch(expected);
+    }
+
     @当("通过API发货订单{string}，快递单号为{string}")
     public void 通过api发货订单快递单号为(String order, String deliverNo) {
         api.post(String.format("orders/%s/deliver", order), new HashMap<String, String>() {{

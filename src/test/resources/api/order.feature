@@ -6,22 +6,41 @@
     假如存在"订单":
       | code  | productName | total |  status        |
       | SN001 | pc          | 19999 |  toBeDelivered |
+      | SN002 | pc          | 19999 |  toBeDelivered |
     当API查询订单时
-    那么返回如下订单
+    那么返回如下:
     """
-      [{
-        "code": "SN001",
-        "productName": "pc",
-        "total": 19999,
-        "status": "toBeDelivered"
-      }]
+    json = | +code  | productName | total   |  status        |
+           | SN001 | pc          | 19999.0 |  toBeDelivered |
+           | SN002 | pc          | 19999.0 |  toBeDelivered |
     """
+#    那么返回如下订单
+#    """
+#      [{
+#        "code": "SN001",
+#        "productName": "pc",
+#        "total": 19999,
+#        "status": "toBeDelivered"
+#      }]
+#    """
 
   场景: 订单详情 - 无物流
     假如存在"订单":
       | code  | productName | total | recipientName | recipientMobile | recipientAddress | status        | deliverNo | deliveredAt |
       | SN001 | 电脑          | 19999 | 张三            | 13085901735     | 上海市长宁区           | toBeDelivered |           |             |
     当API查询订单"SN001"详情时
+    那么返回如下:
+    """
+      json= {
+        "code": "SN001",
+        "productName": "电脑",
+        "total": 19999,
+        "recipientName": "张三",
+        "recipientMobile": "13085901735",
+        "recipientAddress": "上海市长宁区",
+        "status": "toBeDelivered"
+      }
+    """
     那么返回如下订单
     """
       {
@@ -41,6 +60,19 @@
       | SN001 |
     当通过API发货订单"SN001"，快递单号为"SF001"
     那么订单"SN001"已发货，快递单号为"SF001"
+    那么All data "订单" should be:
+    """
+    : | code | deliverNo | status |
+      | SN001 | SF001 | delivering|
+    """
+    那么All data "订单" should be:
+    """
+    :[{
+      code= SN001
+      deliverNo=SF001
+      status: delivering
+    }]
+    """
 
   场景: 订单详情 - 查询物流
     假如存在"订单":
