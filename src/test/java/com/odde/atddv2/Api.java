@@ -47,4 +47,16 @@ public class Api {
         JSONAssert.assertEquals(json, response, JSONCompareMode.NON_EXTENSIBLE);
     }
 
+    @SneakyThrows
+    public void post(String path, Object json) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"),
+                objectMapper.writeValueAsString(json));
+        Request request = new Request.Builder()
+                .url(String.format("http://localhost:10081/api/%s", path))
+                .header("Accept", "application/json")
+                .header("token", token)
+                .post(requestBody).build();
+        response = okHttpClient.newCall(request).execute().body().string();
+    }
 }
